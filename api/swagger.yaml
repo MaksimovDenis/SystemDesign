@@ -1,0 +1,687 @@
+openapi: "3.0.1"
+info:
+  title: VK
+  version: "1.0"
+  description: VK API для работы с друзьями
+
+servers:
+  - url: http://localhost:8080/api
+    description: Локальный сервер API
+
+tags:
+  - name: friends
+  - name: feeds
+  - name: chats
+
+paths:
+  /friends:
+    post:
+      summary: Добавление нового друга.
+      description: Добавление нового друга в список друзей пользователя.
+      security:
+        - BearerAuth: []
+      tags:
+        - friends
+      operationId: addFriend
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddFriendRequest'
+      responses:
+        "200":
+          description: Друг успешно добавлен.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        "400":
+          description: Неверный формат запроса или его параметры.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не существует или некорректен.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Внутренняя ошибка сервера.
+          
+  /friends/{userId}:
+    delete:
+      summary: Удаление друга.
+      description: Удаление друга из списка друзей пользователя.
+      security:
+        - BearerAuth: []
+      tags:
+        - friends
+      operationId: deleteFriend
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Друг успешно удалён.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        "400":
+          description: Неверный формат запроса или его параметры.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не существует или некорректен.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Внутренняя ошибка сервера.
+          
+    get:
+      summary: Получение списка друзей пользователя.
+      description: Возвращает список друзей пользователя с поддержкой пагинации.
+      security:
+        - BearerAuth: []
+      tags:
+        - friends
+      operationId: getFriendsList
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/userId"
+        - name: limit
+          in: query
+          description: Количество друзей на странице.
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: Смещение для пагинации.
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        "200":
+          description: Список друзей пользователя.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  FriendsList:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FriendsList'
+        "400":
+          description: Неверный формат запроса или его параметры.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не существует или некорректен.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Внутренняя ошибка сервера.
+
+  /{userId}:
+    get:
+      summary: Просмотр анкеты пользователя.
+      description: Возвращает анкету пользователя.
+      security:
+        - BearerAuth: []
+      tags:
+        - friends
+      operationId: userInfo
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/userId"
+      responses:
+        "200":
+          description: Анкета пользователя.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserInfo"
+        "400":
+          description: Неверный формат запроса или его параметры.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не существует или некорректен.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Внутренняя ошибка сервера.
+
+  /feeds:
+    post:
+      summary: Публикация поста в ленту.
+      description: Пользователь может создать пост с текстом и изображением.
+      security:
+        - BearerAuth: []
+      tags:
+        - feeds
+      operationId: createPost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+      responses:
+        "201":
+          description: Пост успешно создан.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatePost"
+        "400":
+          description: Неверный формат запроса.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Неавторизованный доступ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Ошибка сервера.
+
+  /feeds/{userId}:
+    get:
+      summary: Просмотр ленты потсов.
+      description: Просмотр ленты постов пользователя по id.
+      security:
+        - BearerAuth: []
+      tags:
+        - feeds
+      operationId: posts
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/userId"
+        - name: limit
+          in: query
+          description: Количество постов на странице.
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: Смещение для пагинации.
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        "200":
+          description: Посты пользователя.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Post"
+        "400":
+          description: Неверный формат запроса.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Неавторизованный доступ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Ошибка сервера.
+
+  /posts/{postId}/media:
+    post:
+      summary: Загрузка медиафайла для поста
+      description: Загрузка медиафайла для поста
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      tags:
+        - feeds
+      operationId: uploadPostMedia
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/File'
+      responses:
+        "201":
+          description: Файл загружен успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mediaUrl:
+                    type: string
+                    format: uri
+        "400":
+          description: Неверный формат запроса.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Неавторизованный доступ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Ошибка сервера.
+
+  /chats/{chatId}/messages:
+    get:
+      summary: Получение сообщений из чата
+      description: Получение сообщений из чата по id
+      security:
+        - BearerAuth: []
+      tags:
+        - chats
+      operationId: getChatMessages
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Количество чатов на странице.
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: Смещение для пагинации.
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        "200":
+          description: Чаты пользователя.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Chat"
+        "400":
+          description: Неверный формат запроса.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Неавторизованный доступ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Ошибка сервера.
+
+    post:
+      summary: Отправка сообщения в чат
+      description: Отправка сообщения в чат
+      security:
+        - BearerAuth: []
+      tags:
+        - chats
+      operationId: sendMessage
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Сообщение отправлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "400":
+          description: Неверный формат запроса.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Неавторизованный доступ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Ошибка сервера.
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    userId:
+      type: integer
+      format: int32
+      description: Уникальный идентификатор пользователя.
+      example: 1
+      minimum: 1
+
+    userName:
+      type: string
+      description: Имя пользователя.
+      example: Иван
+
+    secondUserName:
+      type: string
+      description: Фамилия пользователя.
+      example: Иванов
+
+    userAge:
+      type: integer
+      format: int32
+      description: Возраст пользователя.
+      example: 32
+      minimum: 1
+
+    photo:
+      type: string
+      format: uri
+      description: URL аватарки пользователя.
+      example: "https://example.com/user123.jpg"
+
+    email:
+      type: string
+      description: Электронная почта пользователя.
+      example: ivan.ivanov@example.com
+
+    phone:
+      type: string
+      description: Номер телефона пользователя.
+      example: "+7 912 345 67 89"
+  
+    gender:
+      type: string
+      enum: [male, female, other]
+      description: Пол пользователя.
+      example: male
+  
+    location:
+      type: string
+      description: Город или страна проживания.
+      example: "Москва, Россия"
+
+    bio:
+      type: string
+      description: Краткая информация о пользователе.
+      example: "Люблю программировать и путешествовать."
+
+    friendsCount:
+      type: integer
+      format: int32
+      description: Количество друзей у пользователя.
+  
+    content:
+      type: string
+      description: Тест поста.
+      example: "Текст поста"
+
+    file:
+      type: string
+      format: binary
+
+    AddFriendRequest:
+      type: object
+      properties:
+        userId:
+          $ref: "#/components/schemas/userId"
+      required:
+        - userId
+  
+    FriendsList:
+      type: object
+      description: Информация о друзьях.
+      properties:
+        id:
+          $ref: "#/components/schemas/userId"
+        name:
+          $ref: "#/components/schemas/userName"
+        secondName:
+          $ref: "#/components/schemas/secondUserName"
+        userAge:
+          $ref: "#/components/schemas/userAge"
+        userPhoto:
+          $ref: "#/components/schemas/photo"
+      required:
+        - id
+        - name
+        - secondName
+        - userAge
+        - userPhoto
+      example:
+        id: 234324
+        name: Иван
+        secondName: Иванов
+        userAge: 28
+        userPhoto: "https://example.com/user234324.jpg"
+    
+    UserInfo:
+      type: object
+      description: Анкета пользователя.
+      properties:
+        id:
+          $ref: "#/components/schemas/userId"
+        name:
+          $ref: "#/components/schemas/userName"
+        secondName:
+          $ref: "#/components/schemas/secondUserName"
+        userAge:
+          $ref: "#/components/schemas/userAge"
+        userPhoto:
+          $ref: "#/components/schemas/photo"
+        email:
+          $ref: "#/components/schemas/email"
+        phone:
+          $ref: "#/components/schemas/phone"
+        gender:
+          $ref: "#/components/schemas/gender"
+        location:
+          $ref: "#/components/schemas/location"
+        bio:
+          $ref: "#/components/schemas/bio"
+        friendsCount:
+          $ref: "#/components/schemas/friendsCount"
+      required:
+        - id
+        - name
+        - secondName
+        - userAge
+        - userPhoto
+  
+    File:
+      type: object
+      properties:
+        file:
+          $ref: "#/components/schemas/file"
+
+    CreatePost:
+      type: object
+      description: Публикация в ленте.
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Уникальный идентификатор поста.
+          example: 12345
+        userId:
+          $ref: "#/components/schemas/userId"
+        content:
+          $ref: "#/components/schemas/content"
+        image:
+          $ref: "#/components/schemas/photo"
+        createdAt:
+          type: string
+          format: date-time
+          description: Дата и время создания поста.
+          example: "2024-02-26T14:30:00Z"
+      required:
+        - id
+        - userId
+        - content
+        - createdAt
+
+    Post:
+      type: object
+      description: Публикация в ленте.
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Уникальный идентификатор поста.
+          example: 12345
+        userName:
+          $ref: "#/components/schemas/userName"
+        secondUserName:
+          $ref: "#/components/schemas/secondUserName"
+        content:
+          $ref: "#/components/schemas/content"
+        image:
+          $ref: "#/components/schemas/photo"
+        createdAt:
+          type: string
+          format: date-time
+          description: Дата и время создания поста.
+          example: "2024-02-26T14:30:00Z"
+      required:
+        - id
+        - userName
+        - secondUserName
+        - content
+        - createdAt
+
+    Chat:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Уникальный идентификатор чата.
+          example: 12345
+        name:
+          type: string
+          description: Название чата.
+          example: "Название чата"
+      required:
+        - id
+        - name
+   
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Уникальный идентификатор сообщения.
+          example: 12345
+        chatId:
+          type: integer
+          format: int64
+          description: Уникальный идентификатор чата.
+          example: 12345
+        text:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - id
+        - chatId
+        - text
+        - timestamp
+
+    ErrorResponse:
+      type: object
+      description: Ошибка валидации или другие ошибки API.
+      properties:
+        reason:
+          type: string
+          description: Описание ошибки.
+          minLength: 5
+      required:
+        - reason
+      example:
+        reason: "Пользователь не найден."
