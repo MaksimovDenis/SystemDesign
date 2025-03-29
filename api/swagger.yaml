@@ -237,7 +237,7 @@ paths:
         - BearerAuth: []
       tags:
         - feeds
-      operationId: posts
+      operationId: feedsByUserId
       parameters:
         - name: userId
           in: path
@@ -436,7 +436,7 @@ components:
   schemas:
     userId:
       type: integer
-      format: int32
+      format: int64
       description: Уникальный идентификатор пользователя.
       example: 1
       minimum: 1
@@ -453,9 +453,9 @@ components:
 
     userAge:
       type: integer
-      format: int32
+      format: int64
       description: Возраст пользователя.
-      example: 32
+      example: 64
       minimum: 1
 
     photo:
@@ -492,7 +492,7 @@ components:
 
     friendsCount:
       type: integer
-      format: int32
+      format: int64
       description: Количество друзей у пользователя.
   
     content:
@@ -533,11 +533,11 @@ components:
         - userAge
         - userPhoto
       example:
-        id: 234324
+        id: 234644
         name: Иван
         secondName: Иванов
         userAge: 28
-        userPhoto: "https://example.com/user234324.jpg"
+        userPhoto: "https://example.com/user234644.jpg"
     
     UserInfo:
       type: object
@@ -593,6 +593,8 @@ components:
           $ref: "#/components/schemas/content"
         image:
           $ref: "#/components/schemas/photo"
+        file:
+          $ref: "#/components/schemas/file"
         createdAt:
           type: string
           format: date-time
@@ -625,7 +627,7 @@ components:
           type: string
           format: date-time
           description: Дата и время создания поста.
-          example: "2024-02-26T14:30:00Z"
+          example: "2024-02-26 14:30"
       required:
         - id
         - userName
@@ -685,3 +687,6 @@ components:
         - reason
       example:
         reason: "Пользователь не найден."
+
+# UUID vs 
+# Pagination
