@@ -36,21 +36,21 @@
 DAU = 56,5 млн. пользователей;  
 MAU = 88,3 млн. пользователей;  
 
-RPS(write) = 56_500_000 * 150 * 24 / 86400 = 2_354_167 (r/s)  
-RPS (read) = 2_354_167 * 3 = 7_062_501 (r/s)  
+RPS(write) = 56_500_000 * 150 / 86400 = 98_090 (r/s)  
+RPS (read) = 2_354_167 * 3 = 294_270 (r/s)  
 
-TrafficMessage(read) = 7_062_501 * 4096 * 2 = 26,9 (GB/s)  
-TrafficMessage(read) = 26,9 / 3 = 9 (GB/s)  
-Traffic per day Message(write) = 9 * 86400 = 760 (TB/s)   
-Traffic per year Message(write) = 9 * 365 = 270 (PB/s)  
-Traffic for 5 year Message(write) = 9 * 365 = 1354 (PB/s)  
+TrafficMessage(write) = 98_090 * 4096 * 2 = 767 (MB/s)  
+TrafficMessage(read) = 767 * 3 = 2301 (MB/s)  
+Traffic per day Message(write) = 767 * 86400 = 63 (TB/s)   
+Traffic per year Message(write) = 63 * 365 = 23 (PB/s)  
+Traffic for 5 year Message(write) = 5 * 63 = 315 (PB/s)  
 
-Initial storage capacity for msg =  270 PB  
-Initial storage capacity for msg with replication factor x3 =  810 PБ  
+Initial storage capacity for msg =  315 PB  
+Initial storage capacity for msg with replication factor x3 = 945 PБ  
 HDD disk = 20TB  
 
-Count of hdd for msg = 810 * 1024 / 20 =  41_472 (шт)   
-Count of shards for msg = 41_472 / 12 = 3456  (шардов)  
+Count of hdd for msg = 945 * 1024 / 20 =  48_384 (шт)   
+Count of shards for msg = 48_384 / 12 = 4032  (шардов)    
 
 Initial storage for photo = 56_500_000 * 300 * 0,5 (Mb) = 8 PB  
 Initial storage capacity for photo with replication factor x3 =  24 PБ  
@@ -59,5 +59,5 @@ HDD disk = 20TB
 Count of hdd for photo = 24 * 1024 / 20 = 1229 (шт)  
 Count of shards for photo = 1229 / 12 = 103 шародов  
 
-SUM HDD (msg and photo) = 2304 + 24 = 2328  
-SUM SHARDS (msg and photo) = 2304 + 103 = 2407  
+SUM HDD (msg and photo) = 48_384 + 1229 = 49_613 
+SUM SHARDS (msg and photo) = 4032 + 103 = 4135  
