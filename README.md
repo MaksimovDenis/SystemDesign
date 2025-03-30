@@ -46,18 +46,18 @@ Traffic per year Message(write) = 9 * 365 = 270 (PB/s)
 Traffic for 5 year Message(write) = 9 * 365 = 1354 (PB/s)  
 
 Initial storage capacity for msg =  270 PB  
-Initial storage capacity for msg with replication factor x2 =  540 PБ  
+Initial storage capacity for msg with replication factor x3 =  810 PБ  
 HDD disk = 20TB  
 
-Count of hdd for msg = 540 * 1024 / 20 =  27_648 (шт)   
-Count of shards for msg = 27_648 / 12 = 2304  (шардов)  
+Count of hdd for msg = 810 * 1024 / 20 =  41_472 (шт)   
+Count of shards for msg = 41_472 / 12 = 3456  (шардов)  
 
 Initial storage for photo = 56_500_000 * 300 * 0,5 (Mb) = 8 PB  
-Initial storage capacity for photo with replication factor x2 =  16 PБ  
+Initial storage capacity for photo with replication factor x3 =  24 PБ  
 HDD disk = 20TB
 
-Count of hdd for photo = 16 * 1024 / 20 = 820 (шт)  
-Count of shards for photo = 820 . 12 = 70 шародов  
+Count of hdd for photo = 24 * 1024 / 20 = 1229 (шт)  
+Count of shards for photo = 1229 / 12 = 103 шародов  
 
-SUM HDD (msg and photo) = 2304 + 8 = 2312  
-SUM SHARDS (msg and photo) = 2304 + 8 = 70  
+SUM HDD (msg and photo) = 2304 + 24 = 2328  
+SUM SHARDS (msg and photo) = 2304 + 103 = 2407  
